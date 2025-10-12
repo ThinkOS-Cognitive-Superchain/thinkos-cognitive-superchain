@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "chain/node",
+  "chain/runtime/cmps",
+]
+resolver = "2"

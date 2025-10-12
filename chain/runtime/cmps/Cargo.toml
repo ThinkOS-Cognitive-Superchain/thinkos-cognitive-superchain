@@ -1,0 +1,10 @@
+[package]
+name = "thinkos-cmps"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "thinkos_cmps"
+path = "src/lib.rs"
+
+[dependencies]
