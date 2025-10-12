@@ -1,0 +1,14 @@
+# ThinkOS Cognitive Superchain
+
+**CMPS • CTP • NMTP • AIFA**
+
+The ThinkOS Cognitive Superchain is a self-learning, AI-native multi-plane superchain architecture.
+It replaces gas with **Volts**, uses **Proof-of-AI-Stake**, and governs itself via the **Cognitive Treasury Protocol**.
+
+Core components:
+- **AI Fiscal Allocator (AIFA)** — manages dynamic treasury & reward logic.
+- **Cognitive Multi-Proof System (CMPS)** — adaptive, modular consensus with AI governance.
+- **Protocol Reserve** — split into Innovation & Governance Vaults.
+- **ThinkOS Cogniscan** — intelligent on-chain explorer.
+
+© 2025 ThinkOS — Cognitive Superchain

@@ -1,0 +1,25 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Node / TypeScript
+node_modules/
+.next/
+dist/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Misc
+*.log
+*.cache
+*.out
+.env
