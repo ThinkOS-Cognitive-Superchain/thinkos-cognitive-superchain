@@ -12,3 +12,11 @@ Core components:
 - **ThinkOS Cogniscan** — intelligent on-chain explorer.
 
 © 2025 ThinkOS — Cognitive Superchain
+
+## Quick Start (Dev Setup)
+
+1. Update packages:
+   ```bash
+   sudo apt update && sudo apt -y install build-essential pkg-config libssl-dev clang cmake git curl
+
+
