@@ -1,0 +1,80 @@
+name: Lint & Smoke (Python apps)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        py: [ '3.11' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.py }}
+
+      - name: Install base tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff==0.6.9 black==24.8.0
+
+      # ----- AIFA engine -----
+      - name: AIFA deps (if present)
+        run: |
+          if [ -f aifa/engine/requirements.txt ]; then
+            pip install -r aifa/engine/requirements.txt
+          fi
+
+      - name: AIFA lint/format (if present)
+        run: |
+          if [ -d aifa/engine ]; then
+            ruff check aifa/engine
+            black --check aifa/engine
+          else
+            echo "AIFA engine not present, skipping."
+          fi
+
+      - name: AIFA smoke import (if present)
+        run: |
+          if [ -d aifa/engine ]; then
+            python - << 'PY'
+import importlib
+import sys
+m = importlib.import_module("aifa_engine.api")
+print("Imported:", m.__name__)
+PY
+          fi
+
+      # ----- Cogniscan-Lite -----
+      - name: Cogniscan-Lite deps (if present)
+        run: |
+          if [ -f explorer/cogniscan-lite/requirements.txt ]; then
+            pip install -r explorer/cogniscan-lite/requirements.txt
+          fi
+
+      - name: Cogniscan-Lite lint/format (if present)
+        run: |
+          if [ -d explorer/cogniscan-lite ]; then
+            ruff check explorer/cogniscan-lite
+            black --check explorer/cogniscan-lite
+          else
+            echo "Cogniscan-Lite not present, skipping."
+          fi
+
+      - name: Cogniscan-Lite smoke import (if present)
+        run: |
+          if [ -d explorer/cogniscan-lite ]; then
+            python - << 'PY'
+import importlib
+m = importlib.import_module("app")
+print("Imported app:", m.__name__)
+PY
+          fi
