@@ -37,8 +37,11 @@ jobs:
       - name: Build (release)
         run: cargo build --workspace --release
 
-      - name: Tests
+      - name: Tests (workspace)
         run: cargo test --workspace --all-targets --all-features -- --nocapture
+
+      - name: 🔎 CMPS unit test (show output)
+        run: cargo test -p thinkos-cmps -- --nocapture
 
   aifa:
     name: Lint & Import Check (Python AIFA)
