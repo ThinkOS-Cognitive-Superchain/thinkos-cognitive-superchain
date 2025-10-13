@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+mkdir -p state/nodes/{A,B,C,D,E}
 set -euo pipefail
 
 AIFA_URL="${THINKOS_AIFA_URL:-http://127.0.0.1:8081}"

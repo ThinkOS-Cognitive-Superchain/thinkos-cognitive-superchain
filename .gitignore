@@ -23,3 +23,8 @@ Thumbs.db
 *.cache
 *.out
 .env
+# runtime state snapshots
+state/**/*.json
+node.log
+aifa.log
+*.pid
