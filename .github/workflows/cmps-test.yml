@@ -1,4 +1,4 @@
-name: CMPS Unit Test (explicit)
+name: CMPS Test
 
 on:
   push:
@@ -16,25 +16,7 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install jq (for metadata pretty print)
+      - name: Build & Test CMPS
         run: |
-          sudo apt-get update
-          sudo apt-get -y install jq
-
-      - name: Show repo tree (debug)
-        run: |
-          ls -la
-          echo "---- chain/runtime/cmps/src ----"
-          ls -la chain/runtime/cmps/src || true
-          echo "---- lib.rs head ----"
-          sed -n '1,120p' chain/runtime/cmps/src/lib.rs || true
-
-      - name: Cargo metadata (debug: list workspace members)
-        run: |
-          cargo metadata --no-deps --format-version 1 | jq '.workspace_members'
-
-      - name: Run CMPS tests with output
-        env:
-          RUST_BACKTRACE: 1
-        run: |
-          cargo test -p thinkos-cmps -- --nocapture --exact test_composite_in_range_and_print
+          cd chain/runtime/cmps
+          cargo test -- --nocapture
