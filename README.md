@@ -1,5 +1,10 @@
 # ThinkOS Cognitive Superchain
 
+[![Build & Test (Rust)](https://github.com/ThinkOS-Cognitive-Superchain/thinkos-cognitive-superchain/actions/workflows/thinkos-ci.yml/badge.svg?branch=main)](https://github.com/ThinkOS-Cognitive-Superchain/thinkos-cognitive-superchain/actions/workflows/thinkos-ci.yml)
+[![CMPS Unit Test](https://github.com/ThinkOS-Cognitive-Superchain/thinkos-cognitive-superchain/actions/workflows/cmps-test.yml/badge.svg?branch=main)](https://github.com/ThinkOS-Cognitive-Superchain/thinkos-cognitive-superchain/actions/workflows/cmps-test.yml)
+
+# ThinkOS Cognitive Superchain
+
 **CMPS • CTP • NMTP • AIFA**
 
 The ThinkOS Cognitive Superchain is a self-learning, AI-native multi-plane superchain architecture.
