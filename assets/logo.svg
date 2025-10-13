@@ -1,18 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Transparent background; electric-blue stroke -->
-  <g fill="none" stroke="#17A8FF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Brain contour -->
-    <path d="M256 72c-84 0-152 68-152 152s68 152 152 152 152-68 152-152S340 72 256 72z"/>
-    <!-- Mid seam -->
-    <path d="M256 116v280"/>
-    <!-- Circuit crossbars -->
-    <path d="M168 256h80M264 256h80"/>
-    <!-- Circuit nodes -->
-    <circle cx="168" cy="256" r="12" fill="#17A8FF"/>
-    <circle cx="344" cy="256" r="12" fill="#17A8FF"/>
-    <circle cx="256" cy="168" r="12" fill="#17A8FF"/>
-    <circle cx="256" cy="344" r="12" fill="#17A8FF"/>
-    <!-- Little “neuron” slashes to hint cognition -->
-    <path d="M204 184l-26-26M308 184l26-26M204 328l-26 26M308 328l26 26"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#000000"/>
+  <g fill="none" stroke="#00C8FF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 90c-78 0-142 64-142 142s64 142 142 142 142-64 142-142S334 90 256 90z"/>
+    <path d="M256 132v248"/>
+    <path d="M256 256h88"/><path d="M256 256h-88"/>
+    <circle cx="256" cy="256" r="24" fill="#00C8FF"/>
+    <path d="M180 180l-40-40M332 180l40-40M180 332l-40 40M332 332l40 40"/>
   </g>
 </svg>
