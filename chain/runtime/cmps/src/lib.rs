@@ -36,11 +36,15 @@ mod tests {
         let w = (0.25, 0.30, 0.20, 0.15, 0.10);
         let v = composite(&s, w);
 
-        // Print so value appears in CI logs
-        println!("CMPS composite (test) = {:.6}", v);
+        println!("🧠 ThinkOS CMPS composite score (unit test) = {:.6}", v);
 
-        // Basic sanity: finite and within [0, 1.1] (tiny wiggle room for rounding)
-        assert!(v.is_finite(), "Composite not finite: {v}");
-        assert!((0.0..=1.1).contains(&v), "Composite out of expected range: {v}");
+        assert!(
+            v.is_finite(),
+            "Composite not finite: {v}"
+        );
+        assert!(
+            v >= 0.0 && v <= 1.1,
+            "Composite out of expected range: {v}"
+        );
     }
 }
