@@ -13,6 +13,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install jq (for metadata pretty print)
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install jq
+
       - name: Show repo tree (debug)
         run: |
           ls -la
@@ -21,11 +29,9 @@ jobs:
           echo "---- lib.rs head ----"
           sed -n '1,120p' chain/runtime/cmps/src/lib.rs || true
 
-      - name: Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
       - name: Cargo metadata (debug: list workspace members)
-        run: cargo metadata --no-deps --format-version 1 | jq '.workspace_members'
+        run: |
+          cargo metadata --no-deps --format-version 1 | jq '.workspace_members'
 
       - name: Run CMPS tests with output
         env:
