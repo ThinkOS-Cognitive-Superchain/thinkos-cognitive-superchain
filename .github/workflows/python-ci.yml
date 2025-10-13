@@ -47,7 +47,6 @@ jobs:
           if [ -d aifa/engine ]; then
             python - << 'PY'
 import importlib
-import sys
 m = importlib.import_module("aifa_engine.api")
 print("Imported:", m.__name__)
 PY
@@ -73,7 +72,8 @@ PY
         run: |
           if [ -d explorer/cogniscan-lite ]; then
             python - << 'PY'
-import importlib
+import sys, importlib
+sys.path.insert(0, "explorer/cogniscan-lite")
 m = importlib.import_module("app")
 print("Imported app:", m.__name__)
 PY
