@@ -1,0 +1,34 @@
+name: CMPS Unit Test (explicit)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  cmps-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show repo tree (debug)
+        run: |
+          ls -la
+          echo "---- chain/runtime/cmps/src ----"
+          ls -la chain/runtime/cmps/src || true
+          echo "---- lib.rs head ----"
+          sed -n '1,120p' chain/runtime/cmps/src/lib.rs || true
+
+      - name: Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cargo metadata (debug: list workspace members)
+        run: cargo metadata --no-deps --format-version 1 | jq '.workspace_members'
+
+      - name: Run CMPS tests with output
+        env:
+          RUST_BACKTRACE: 1
+        run: |
+          cargo test -p thinkos-cmps -- --nocapture --exact test_composite_in_range_and_print
