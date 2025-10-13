@@ -38,7 +38,11 @@ mod tests {
 
         println!("🧠 ThinkOS CMPS composite score (unit test) = {:.6}", v);
 
+        // Idiomatic range check to satisfy clippy
         assert!(v.is_finite(), "Composite not finite: {v}");
-        assert!((0.0..=1.1).contains(assert!(v >= 0.0 && v <= 1.1, "Composite out of expected range: {v}");v), "Composite out of expected range: {v}");
+        assert!(
+            (0.0..=1.1).contains(&v),
+            "Composite out of expected range: {v}"
+        );
     }
 }
