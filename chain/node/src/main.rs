@@ -1,7 +1,11 @@
+use anyhow::Context;
 use chrono::{DateTime, Utc};
 use colored::*;
+use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use std::{fs, path::Path, thread, time::Duration};
+
+mod p2p;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 struct Telemetry {
@@ -19,6 +23,7 @@ struct Weights {
     w3: f64,
     w4: f64,
 }
+
 #[derive(Debug, Serialize, Deserialize)]
 struct VaultSplit {
     innovation: u32,
@@ -34,132 +39,130 @@ fn save_json<T: Serialize, P: AsRef<Path>>(value: &T, path: P) -> anyhow::Result
     Ok(())
 }
 
-fn post_weights(aifa: &str, tele: &Telemetry) -> anyhow::Result<Weights> {
-    let client = reqwest::blocking::Client::new();
-    let url = format!("{}/weights", aifa.trim_end_matches('/'));
-    let resp = client.post(url).json(tele).send()?;
-    if !resp.status().is_success() {
-        anyhow::bail!("AIFA /weights {}", resp.status());
-    }
-    Ok(resp.json::<Weights>()?)
-}
-
-fn get_vault_split(aifa: &str, mode: &str) -> anyhow::Result<VaultSplit> {
-    let client = reqwest::blocking::Client::new();
-    let url = format!("{}/vault_split", aifa.trim_end_matches('/'));
-    let resp = client.get(url).query(&[("mode", mode)]).send()?;
-    if !resp.status().is_success() {
-        anyhow::bail!("AIFA /vault_split {}", resp.status());
-    }
-    Ok(resp.json::<VaultSplit>()?)
-}
-
-fn composite(s: &thinkos_cmps::Scores, w: &Weights) -> f64 {
-    thinkos_cmps::composite(s, (w.w0, w.w1, w.w2, w.w3, w.w4))
-}
-
-fn env<T: std::str::FromStr>(key: &str, default: T) -> T {
-    std::env::var(key)
-        .ok()
-        .and_then(|v| v.parse::<T>().ok())
-        .unwrap_or(default)
-}
-
-fn banner(node_id: &str) {
-    println!(
-        "{}",
-        "================================================".bright_cyan()
-    );
-    println!(
-        "{}",
-        format!(" ThinkOS Cognitive Superchain — Node {}", node_id)
-            .bright_cyan()
-            .bold()
-    );
-    println!(
-        "{}",
-        " (CMPS + AIFA + Loop + Per-node persistence)".bright_cyan()
-    );
-    println!(
-        "{}",
-        "================================================".bright_cyan()
-    );
-}
-
 fn main() -> anyhow::Result<()> {
-    let node_id = std::env::var("THINKOS_NODE_ID").unwrap_or_else(|_| "A".into());
-    banner(&node_id);
+    // --- node identity from env ---
+    let node_id = std::env::var("NODE_ID")
+        .unwrap_or_else(|_| "A".to_string())
+        .chars()
+        .next()
+        .unwrap();
 
-    let aifa_url =
-        std::env::var("THINKOS_AIFA_URL").unwrap_or_else(|_| "http://127.0.0.1:8081".into());
-    let market_mode = std::env::var("THINKOS_MARKET_MODE").unwrap_or_else(|_| "neutral".into());
-    let out_dir =
-        std::env::var("THINKOS_STATE_DIR").unwrap_or_else(|_| format!("state/nodes/{node_id}"));
-    let loop_secs: u64 = env("THINKOS_LOOP_SECS", 5);
-    let iters: usize = env("THINKOS_ITERS", 60);
+    // --- basic config ---
+    let aifa = std::env::var("AIFA_URL").unwrap_or_else(|_| "http://127.0.0.1:8081".into());
+    let mode = std::env::var("MARKET_MODE").unwrap_or_else(|_| "neutral".into());
+    let iters: u32 = std::env::var("ITERS").ok().and_then(|s| s.parse().ok()).unwrap_or(80);
+    let period_ms: u64 = std::env::var("PERIOD_MS").ok().and_then(|s| s.parse().ok()).unwrap_or(3000);
 
-    // Telemetry per node (defaults are reasonable)
-    let tele = Telemetry {
-        volatility: env("THINKOS_TELE_VOL", 0.20_f64),
-        congestion: env("THINKOS_TELE_CONG", 0.10_f64),
-        uptime_variance: env("THINKOS_TELE_UPVAR", 0.02_f64),
-        treasury_health: env("THINKOS_TELE_TREAS", 0.90_f64),
+    // --- banner ---
+    println!("{}", "===============================================".bright_cyan());
+    println!("{}", " ThinkOS Cognitive Superchain — Dev Boot".bright_white());
+    println!("{}", " (CMPS + AIFA + CTP + persistence)".bright_white());
+    println!("{}", "===============================================".bright_cyan());
+    println!("Boot: {}", Utc::now().to_rfc3339());
+    println!("AIFA: {}", aifa);
+    println!("Mode: {}", mode);
+
+    // --- state dir per node ---
+    let state_dir = std::path::PathBuf::from(format!("state/nodes/{}/", node_id));
+    std::fs::create_dir_all(&state_dir).ok();
+
+    // --- start lightweight UDP gossip in background ---
+    p2p::spawn(node_id, state_dir.clone());
+
+    let client = Client::builder().build()?;
+
+    // one static composite (for display) using equal-ish weights
+    let static_scores = thinkos_cmps::Scores {
+        continuity: 0.9,
+        cognition: 0.8,
+        synergy: 0.7,
+        adaptation: 0.6,
+        integrity: 0.85,
     };
+    let static_w = (0.25, 0.30, 0.20, 0.15, 0.10);
+    let static_comp = thinkos_cmps::composite(&static_scores, static_w);
+    println!("Static composite: {:.4}", static_comp);
 
-    println!("AIFA: {}", aifa_url.bright_yellow());
-    println!("Mode: {}", market_mode.bright_yellow());
-    println!(
-        "Node: {}  Out: {}  Loop: {}s  Iters: {}",
-        node_id, out_dir, loop_secs, iters
-    );
-    println!(
-        "Telemetry: vol={:.3} cong={:.3} upvar={:.3} treas={:.3}",
-        tele.volatility, tele.congestion, tele.uptime_variance, tele.treasury_health
-    );
-
-    let s = thinkos_cmps::Scores {
-        continuity: 0.90,
-        cognition: 0.80,
-        synergy: 0.70,
-        adaptation: 0.60,
-        integrity: 0.95,
-    };
-
-    for i in 1..=iters {
+    for t in 1..=iters {
         let ts: DateTime<Utc> = Utc::now();
-        print!(
-            "{}",
-            format!("[{ts}] [{}] tick {:03}  ", node_id, i).bright_black()
-        );
 
-        // fetch weights
-        match post_weights(&aifa_url, &tele) {
-            Ok(w) => {
-                let score = composite(&s, &w);
+        // 1) ask AIFA for dynamic weights
+        let tel = Telemetry {
+            volatility: 0.23,
+            congestion: 0.18,
+            uptime_variance: 0.03,
+            treasury_health: 0.88,
+        };
+
+        let w_resp = client
+            .post(format!("{}/weights", aifa))
+            .json(&tel)
+            .send();
+
+        let weights: Option<Weights> = match w_resp {
+            Ok(resp) if resp.status().is_success() => resp.json().ok(),
+            _ => None,
+        };
+
+        // 2) ask AIFA for vault split
+        let s_resp = client
+            .get(format!("{}/vault_split", aifa))
+            .query(&[("mode", mode.as_str())])
+            .send();
+
+        let split: Option<VaultSplit> = match s_resp {
+            Ok(resp) if resp.status().is_success() => resp.json().ok(),
+            _ => None,
+        };
+
+        // 3) compute dynamic composite if weights arrived
+        let dyn_comp = if let Some(w) = &weights {
+            let s = thinkos_cmps::Scores {
+                continuity: 0.9,
+                cognition: 0.8,
+                synergy: 0.7,
+                adaptation: 0.6,
+                integrity: 0.85,
+            };
+            let w_tuple = (w.w0, w.w1, w.w2, w.w3, w.w4);
+            Some(thinkos_cmps::composite(&s, w_tuple))
+        } else {
+            None
+        };
+
+        // 4) persist snapshots
+        if let Some(w) = &weights {
+            save_json(w, state_dir.join("aifa_latest.json")).ok();
+        }
+        if let Some(sp) = &split {
+            save_json(sp, state_dir.join("ctp_latest.json")).ok();
+        }
+
+        // 5) log line
+        match (weights, split, dyn_comp) {
+            (Some(w), Some(sp), Some(dc)) => {
                 println!(
-                    "{}",
-                    format!(
-                        "weights=({:.3},{:.3},{:.3},{:.3},{:.3}) score={:.4}",
-                        w.w0, w.w1, w.w2, w.w3, w.w4, score
-                    )
-                    .white()
+                    "[{}] [{}] tick {:03}  weights=({:.3},{:.3},{:.3},{:.3},{:.3}) dyn={:.4} split=({}/{})",
+                    ts,
+                    node_id,
+                    t,
+                    w.w0, w.w1, w.w2, w.w3, w.w4,
+                    dc,
+                    sp.innovation, sp.governance,
                 );
-                let snap = serde_json::json!({ "ts": ts.to_rfc3339(), "node": node_id, "telemetry": tele, "weights": w, "score": score });
-                let _ = save_json(&snap, format!("{out_dir}/aifa_latest.json"));
             }
-            Err(e) => println!("{}", format!("AIFA weights error: {e}").bright_red()),
+            _ => {
+                println!(
+                    "[{}] [{}] tick {:03}  {}",
+                    ts,
+                    node_id,
+                    t,
+                    "AIFA request failed — continuing with last known values".bright_yellow()
+                );
+            }
         }
 
-        // fetch vault split
-        match get_vault_split(&aifa_url, &market_mode) {
-            Ok(v) => {
-                let snap = serde_json::json!({ "ts": ts.to_rfc3339(), "node": node_id, "mode": market_mode, "split": v });
-                let _ = save_json(&snap, format!("{out_dir}/ctp_latest.json"));
-            }
-            Err(e) => println!("{}", format!("AIFA vault_split error: {e}").bright_red()),
-        }
-
-        thread::sleep(Duration::from_secs(loop_secs));
+        thread::sleep(Duration::from_millis(period_ms));
     }
 
     println!(
