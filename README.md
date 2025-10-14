@@ -139,8 +139,8 @@ a global AI-synthetic economic organism capable of autonomous adaptation.
 ### 🧠 ThinkOS — *Where AI becomes the fabric of reality.*
 
 <p align="center">
-  <img src="assets/logo.svg" alt="ThinkOS Logo" width="80"/><br>
+  <img src="assets/thinkos-logo.png" alt="ThinkOS Logo" width="80"/><br>
   <sub>© 2025 ThinkOS Cognitive Superchain — All Rights Reserved.</sub>
 </p>
 
-MD
+
