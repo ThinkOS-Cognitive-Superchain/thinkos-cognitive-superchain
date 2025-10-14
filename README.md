@@ -9,7 +9,7 @@
   <img src="assets/thinkos-logo.png" alt="ThinkOS Logo" width="120"/>
 
 </p>
-cat >> README.md <<'MD'
+
 
 ---
 
@@ -60,7 +60,7 @@ It replaces traditional blockchain layers with **cognitive equivalents**, creati
 
 ---
 
-MD
+
 
 ---
 
