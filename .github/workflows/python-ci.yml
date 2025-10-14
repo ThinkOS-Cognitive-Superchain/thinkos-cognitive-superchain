@@ -2,39 +2,45 @@ name: Lint & Smoke (Python)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   python:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        py: [ "3.11" ]
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.py }}
+            python-version: "3.11"
 
-      - name: Install dependencies
+      # --- minimal deps only if file exists (keeps it fast/stable) ---
+      - name: Install AIFA deps (if present)
         run: |
-          python -m pip install --upgrade pip
-          pip install black==24.8.0 ruff==0.6.9 fastapi uvicorn
+          if [ -f aifa/engine/requirements.txt ]; then
+            python -m pip install --upgrade pip
+            pip install -r aifa/engine/requirements.txt
+          fi
 
-      - name: Lint (black + ruff)
+      # --- smoke test: make sure the explorer compiles & imports ---
+      - name: Smoke: byte-compile Cogniscan-Lite
         run: |
-          black --check explorer/cogniscan-lite || true
-          ruff check explorer/cogniscan-lite || true
+          python -m compileall -q explorer/cogniscan-lite || true
 
-      - name: Smoke Test
+      - name: Smoke: import FastAPI app
+        working-directory: explorer/cogniscan-lite
         run: |
-          python -m compileall explorer/cogniscan-lite || true
-
-
+          python - <<'PY'
+          import importlib.util, pathlib
+          p = pathlib.Path('app.py')
+          spec = importlib.util.spec_from_file_location('app', p)
+          assert spec and spec.loader, "Failed to locate app.py"
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          assert hasattr(mod, "app"), "FastAPI app object not found"
+          print("OK: FastAPI app imported")
+          PY
