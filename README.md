@@ -6,7 +6,8 @@
 [![CMPS Tests](https://github.com/ThinkOS-Cognitive-Superchain/thinkos-cognitive-superchain/actions/workflows/cmps-test.yml/badge.svg?branch=main)](https://github.com/ThinkOS-Cognitive-Superchain/thinkos-cognitive-superchain/actions/workflows/cmps-test.yml)
 
 <p align="center">
-  <img src= "ThinkOS Logo" width="120"/>
+  <img src="assets/thinkos-logo.png" alt="ThinkOS Logo" width="120"/>
+
 </p>
 
 ---
