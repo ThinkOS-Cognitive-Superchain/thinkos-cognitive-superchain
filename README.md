@@ -9,6 +9,58 @@
   <img src="assets/thinkos-logo.png" alt="ThinkOS Logo" width="120"/>
 
 </p>
+cat >> README.md <<'MD'
+
+---
+
+## 🌍 Project Overview  
+
+**ThinkOS – Cognitive Superchain** is the world’s first **AI-native, self-learning cognitive network**.  
+It replaces traditional blockchain layers with **cognitive equivalents**, creating a network that thinks, adapts, and evolves in real time.  
+
+> **Mission:** To build the post-blockchain era — a global cognitive fabric where intelligence, not transactions, is the unit of value.  
+
+---
+
+## 🧬 High-Level Architecture  
+
+            ┌─────────────────────────────┐
+            │     Cognitive Treasury       │
+            │       Protocol (CTP)         │
+            │     ────────────────────     │
+            │ AI-managed Vault Economy     │
+            └────────────┬────────────────┘
+                         │
+            ┌────────────▼────────────┐
+            │ Cognitive Multi-Proof   │
+            │     System (CMPS)       │
+            │ Adaptive AI Consensus   │
+            └────────────┬────────────┘
+                         │
+            ┌────────────▼────────────┐
+            │  Cognitive Fabric (TCF) │
+            │  Living State Mesh      │
+            └────────────┬────────────┘
+                         │
+            ┌────────────▼────────────┐
+            │ Neural Mesh Transmission│
+            │   Protocol (NMTP)       │
+            │ AI-Routed Networking    │
+            └─────────────────────────┘
+
+
+**Flow summary:**  
+1. **TCF** — the living substrate (replaces blockchains)  
+2. **CMPS** — adaptive consensus of intelligence  
+3. **CTP** — self-balancing economic system  
+4. **AIFA** orchestrates the entire cognitive cycle  
+
+> Together they form the **ThinkOS Cognitive Stack** —  
+> a unified intelligence economy capable of autonomous growth, healing, and evolution.
+
+---
+
+MD
 
 ---
 
