@@ -102,7 +102,7 @@ self-balancing, self-evolving, and infinitely scalable.
 - Accessible via local instance:  
 
 
-cat >> README.md <<'MD'
+
 
 ---
 
