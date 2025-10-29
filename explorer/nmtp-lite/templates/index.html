@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThinkOS NMTP-Lite v6.0 – Neural City Interface</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/controls/OrbitControls.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>ThinkOS NMTP-Lite v6.0</h1>
+    <p>Neural Mesh Transmission Protocol – Cognitive Systems Division</p>
+    <div id="modeSwitcher">
+      <button data-mode="SCM" class="modeBtn active">SCM</button>
+      <button data-mode="QRE" class="modeBtn">QRE</button>
+      <button data-mode="SMI" class="modeBtn">SMI</button>
+    </div>
+  </header>
+
+  <!-- 3D Scene -->
+  <section id="sceneSection">
+    <canvas id="neuralScene"></canvas>
+  </section>
+
+  <!-- Dashboard Panels -->
+  <section id="dataPanels">
+    <div class="panel">
+      <h2>System Status</h2>
+      <p id="stabilityValue">--</p>
+      <ul><li>Stability</li><li>Flux</li><li>Entropy</li></ul>
+    </div>
+
+    <div class="panel">
+      <h2>Power Controls</h2>
+      <p>Power: <span id="powerValue">--</span> k</p>
+      <p>Peak Flux: <span id="fluxValue">--</span> TPF</p>
+      <button id="autoReg">Auto Regulate</button>
+    </div>
+
+    <div class="panel" id="aifaPanel">
+      <h2>AIFA Cognitive Core</h2>
+      <div id="aifaContainer">
+        <div id="aifaRing"></div>
+        <div id="aifaFace"></div>
+      </div>
+      <p id="aifaText">Booting neural consciousness ...</p>
+    </div>
+  </section>
+
+  <section id="controlPlane">
+    <button class="action">Inject Energy</button>
+    <button class="action">Resonate Network</button>
+    <button class="action">Destabilize Sector</button>
+    <button class="action">Stabilize Mesh</button>
+  </section>
+
+  <footer>© ThinkOS Cognitive Superchain – AI Systems Division</footer>
+
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

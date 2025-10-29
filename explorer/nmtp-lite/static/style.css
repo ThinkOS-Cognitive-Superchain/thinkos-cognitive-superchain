@@ -1,0 +1,101 @@
+body {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  background: radial-gradient(circle at center, #010a14, #000);
+  color: #00eaff;
+  overflow-y: scroll;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  color: #00eaff;
+}
+
+#sceneSection {
+  height: 70vh;
+  overflow: hidden;
+}
+
+canvas#neuralScene {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#dataPanels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 30px;
+  gap: 20px;
+}
+
+.panel {
+  background: rgba(0, 25, 35, 0.6);
+  border: 1px solid #00eaff44;
+  border-radius: 12px;
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 0 15px #00eaff22;
+  transition: 0.4s;
+}
+.panel:hover { box-shadow: 0 0 25px #00eaff66; }
+
+#aifaContainer {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 10px;
+}
+#aifaRing {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #00eaff;
+  border-radius: 50%;
+  box-shadow: 0 0 20px #00eaff;
+  animation: spin 5s linear infinite;
+}
+#aifaFace {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at center, #00eaff, #000);
+  border-radius: 50%;
+  position: absolute;
+  top: 30px; left: 30px;
+  box-shadow: 0 0 25px #00eaff88;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+#controlPlane {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 40px 10px;
+}
+
+button {
+  background: transparent;
+  color: #00eaff;
+  border: 1px solid #00eaff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: "Orbitron";
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover {
+  background: #00eaff;
+  color: black;
+  box-shadow: 0 0 15px #00eaff;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
